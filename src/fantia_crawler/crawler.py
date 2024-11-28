@@ -362,6 +362,8 @@ class FantiaCrawler:
             matching_files = self.find_matching_videos(history)
             # Process each video
             processed_ids = []
+
+            print(f"Ready to fetch metadata for {len(matching_files)} files ...")
             for video_file in matching_files:
                 try:
                     # Get post metadata, passing the video path

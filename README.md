@@ -69,18 +69,19 @@ pip install fantia-crawler
 ### Usage
 
 ```bash
-fantia-crawler -e your_email@example.com -p your_password -d /path/to/video/directory
+fantia-crawler -e your_email@example.com -p your_password -b browser -d /path/to/video/directory
 ```
 
 ### Arguments
 - `-e, --email`: Your Fantia account email
 - `-p, --password`: Your Fantia account password
+- `-b, --browser`: Can be Chrome, Edge, Firefox or Safari
 - `-d, --directory`: Directory to process videos (defaults to current directory)
 
 ### Usage Requirements
 - Video filenames must include the Fantia post ID (from URL: https://fantia.jp/posts/xxxxxxx)
 - Supported video formats: .mp4 and .mov
-- Accompanying image files with the same name as the video will be automatically processed
+- Accompanying image files with the same name as the video will be directly used
 
 ### Login Process
 - Manual login is required to avoid anti-crawler detection
@@ -98,9 +99,11 @@ fantia-crawler -e your_email@example.com -p your_password -d /path/to/video/dire
 - 从Fantia下载预览图时，运行本项目所在的shell窗口也需要能够顺利访问Fantia
 
 ```shell
+# Before using fantia-crawler
+
 # For *nix
-export https_proxy=http://127.0.0.1:yourport
-export http_proxy=http://127.0.0.1:yourport
+export HTTPS_PROXY=http://127.0.0.1:yourport
+export HTTP_PROXY=http://127.0.0.1:yourport
 # For Powershell
 $Env:http_proxy="http://127.0.0.1:yourport";$Env:https_proxy="http://127.0.0.1:yourport"
 ```
@@ -114,18 +117,19 @@ pip install fantia-crawler
 ### 使用方法
 
 ```bash
-fantia-crawler -e 账号 -p 密码 -d 视频路径
+fantia-crawler -e 账号 -p 密码
 ```
 
 ### 参数说明
 - `-e, --email`: Fantia账号邮箱
 - `-p, --password`: Fantia账号密码
+- `-b, --browser`: 可以是Chrome, Edge, Firefox或者Safari
 - `-d, --directory`: 视频处理目录（默认为当前目录）
 
 ### 使用要求
 - 视频文件名必须包含Fantia帖子ID（来自URL: https://fantia.jp/posts/xxxxxxx）
 - 支持的视频格式：.mp4 和 .mov
-- 与视频文件同名的图像文件将被自动处理
+- 与视频文件同名的图像文件将会被直接使用，跳过爬取图片
 
 ### 登录流程
 
