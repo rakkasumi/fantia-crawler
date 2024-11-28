@@ -94,6 +94,16 @@ fantia-crawler -e your_email@example.com -p your_password -d /path/to/video/dire
 ### 重要声明
 - **本项目不提供未经授权的视频下载**
 - 部分Fantia帖子可能需要成为会员才能获取元数据
+- 你的网络环境需要能够顺利访问Fantia
+- 从Fantia下载预览图时，运行本项目所在的shell窗口也需要能够顺利访问Fantia
+
+```shell
+# For *nix
+export https_proxy=http://127.0.0.1:yourport
+export http_proxy=http://127.0.0.1:yourport
+# For Powershell
+$Env:http_proxy="http://127.0.0.1:yourport";$Env:https_proxy="http://127.0.0.1:yourport"
+```
 
 ### 安装
 

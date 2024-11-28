@@ -8,6 +8,19 @@ version = "0.1.0"
 description = "A metadata crawler for Fantia videos"
 readme = "README.md"
 requires-python = ">=3.7"
+authors = [
+    {name = "ChowDPa02K", email = "chowdpa02k@outlook.com"}
+]
+classifiers = [
+    'Programming Language :: Python :: 3',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent'
+]
+dependencies = [
+    'selenium',
+    'requests',
+    'pillow'
+]
 
 [project.scripts]
 fantia-crawler = "fantia_crawler.cli:main"
