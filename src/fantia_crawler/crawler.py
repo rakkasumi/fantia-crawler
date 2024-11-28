@@ -49,9 +49,9 @@ class FantiaCrawler:
         password_input.send_keys(self.password)
         
         # Find and click login button
-        login_button = WebDriverWait(self.driver, 20).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn-primary[type='submit']"))
-        )
+        # login_button = WebDriverWait(self.driver, 20).until(
+        #     EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn-primary[type='submit']"))
+        # )
         input("When you log in successfully, press Enter to continue")
 
         # Wait for page change
@@ -135,6 +135,7 @@ class FantiaCrawler:
         element = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "h1.post-title.mb-10"))
         )
+        print(element.text)
         return element.text
 
     def _get_post_thumbnail(self, post_id, video_path):
@@ -206,13 +207,30 @@ class FantiaCrawler:
         return save_path
 
     def _get_post_description(self):
-        """Get post description"""
-        div = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "wysiwyg.mb-30"))
-        )
-        html_content = div.get_attribute("innerHTML")
-        html_content = re.sub(r'(<br\s*/?>\s*){2,}', '<br>', html_content)
-        return html_content.replace('<br>', os.linesep)
+        """Get post description based on sibling structure."""
+        self.driver.implicitly_wait(1)
+        try:
+            thumbnail_div = WebDriverWait(self.driver, 3).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "post-thumbnail.bg-gray.mt-30.mb-30"))
+            )
+            sibling_div = thumbnail_div.find_element(By.XPATH, "following-sibling::div")
+            
+            try:
+                description = sibling_div.find_element(By.CLASS_NAME, "wysiwyg.mb-30")
+                html_content = description.get_attribute("innerHTML")
+            except Exception:
+                description = sibling_div.find_element(By.CSS_SELECTOR, "div.ql-container.ql-snow.ql-disabled div.ql-editor")
+                html_content = description.get_attribute("innerHTML")
+            
+            # 清理 HTML 并返回结果
+            html_content = re.sub(r'(<br\s*/?>\s*){2,}', '<br>', html_content)
+            return html_content.replace('<br>', os.linesep)
+
+        except Exception as e:
+            print(
+                f"Failed to fetch post description: {e}"
+            )
+            return ''
 
     def _get_post_club(self):
         """Get fanclub/author name"""

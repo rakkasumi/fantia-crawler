@@ -17,9 +17,8 @@ def main():
     args = parser.parse_args()
     
     try:
-        crawler = FantiaCrawler(args.email, args.password)
-        crawler.login()
-        crawler.process_videos(args.directory)
+        crawler = FantiaCrawler(args.email, args.password, working_directory=args.directory)
+        crawler.process_videos()
     except Exception as e:
         print(f"An error occurred: {e}")
     finally:
