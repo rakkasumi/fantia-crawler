@@ -23,10 +23,9 @@ class FantiaCrawler:
         """
         self.email = email
         self.password = password
-        self.driver = None
         self.working_directory = working_directory or os.getcwd()
         self.history_file = os.path.join(self.working_directory, 'finished.log')
-        
+        self.driver = webdriver.Chrome()
         # Ensure images directory exists
         os.makedirs(os.path.join(self.working_directory, 'images'), exist_ok=True)
 
@@ -34,9 +33,9 @@ class FantiaCrawler:
         """
         Log in to Fantia website
         """
-        self.driver = webdriver.Chrome()
+        self.driver.get("https://fantia.jp/?locale=zh-cn")
+        self.driver.implicitly_wait(5)
         self.driver.get("https://fantia.jp/sessions/signin")
-        
         # Wait for email input
         email_input = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, "user_email"))
@@ -54,12 +53,11 @@ class FantiaCrawler:
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn-primary[type='submit']"))
         )
         input("When you log in successfully, press Enter to continue")
-        
+
         # Wait for page change
         WebDriverWait(self.driver, 10).until(
             EC.url_changes("https://fantia.jp")
         )
-        self.driver.implicitly_wait(5)
 
     def get_history(self):
         """
