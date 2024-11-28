@@ -13,7 +13,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class FantiaCrawler:
-    def __init__(self, email, password, working_directory=None):
+    def __init__(self, email, password, working_directory=None, driver='chrome'):
         """
         Initialize the Fantia Crawler
         
@@ -25,7 +25,15 @@ class FantiaCrawler:
         self.password = password
         self.working_directory = working_directory or os.getcwd()
         self.history_file = os.path.join(self.working_directory, 'finished.log')
-        self.driver = webdriver.Chrome()
+        # Init web driver
+        if driver.lower() == 'edge':
+            self.driver = webdriver.Edge()
+        elif driver.lower() == 'firefox':
+            self.driver = webdriver.Firefox()
+        elif driver.lower() == 'safari':
+            self.driver = webdriver.Safari()
+        else:
+            self.driver = webdriver.Chrome()
         # Ensure images directory exists
         os.makedirs(os.path.join(self.working_directory, 'images'), exist_ok=True)
 
@@ -111,6 +119,7 @@ class FantiaCrawler:
         :param video_path: Path to the source video file
         :return: Dictionary of post metadata
         """
+        self.driver.implicitly_wait(10)
         self.driver.get(f"https://fantia.jp/posts/{post_id}")
         
         title = self._get_post_title()
