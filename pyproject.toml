@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fantia-crawler"
-version = "0.5.0"
+version = "0.6.0"
 description = "A metadata crawler for Fantia videos"
 readme = "README.md"
 requires-python = ">=3.7"

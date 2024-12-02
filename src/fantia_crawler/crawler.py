@@ -12,8 +12,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 class FantiaCrawler:
-    def __init__(self, email, password, working_directory=None, driver='chrome'):
+
+    def __init__(self,
+                 email,
+                 password,
+                 working_directory=None,
+                 driver='chrome'):
         """
         Initialize the Fantia Crawler
         
@@ -24,7 +30,8 @@ class FantiaCrawler:
         self.email = email
         self.password = password
         self.working_directory = working_directory or os.getcwd()
-        self.history_file = os.path.join(self.working_directory, 'finished.log')
+        self.history_file = os.path.join(self.working_directory,
+                                         'finished.log')
         # Init web driver
         if driver.lower() == 'edge':
             self.driver = webdriver.Edge()
@@ -35,7 +42,8 @@ class FantiaCrawler:
         else:
             self.driver = webdriver.Chrome()
         # Ensure images directory exists
-        os.makedirs(os.path.join(self.working_directory, 'images'), exist_ok=True)
+        os.makedirs(os.path.join(self.working_directory, 'images'),
+                    exist_ok=True)
 
     def login(self):
         """
@@ -46,16 +54,14 @@ class FantiaCrawler:
         self.driver.get("https://fantia.jp/sessions/signin")
         # Wait for email input
         email_input = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "user_email"))
-        )
+            EC.presence_of_element_located((By.ID, "user_email")))
         email_input.send_keys(self.email)
-        
+
         # Wait for password input
         password_input = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, "user_password"))
-        )
+            EC.presence_of_element_located((By.ID, "user_password")))
         password_input.send_keys(self.password)
-        
+
         # Find and click login button
         # login_button = WebDriverWait(self.driver, 20).until(
         #     EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn-primary[type='submit']"))
@@ -63,9 +69,8 @@ class FantiaCrawler:
         input("When you log in successfully, press Enter to continue")
 
         # Wait for page change
-        WebDriverWait(self.driver, 10).until(
-            EC.url_changes("https://fantia.jp")
-        )
+        WebDriverWait(self.driver,
+                      10).until(EC.url_changes("https://fantia.jp"))
 
     def get_history(self):
         """
@@ -89,26 +94,27 @@ class FantiaCrawler:
         """
         matching_files = []
         pattern = r"\d{4,}"
-        
+
         for root, _, files in os.walk(self.working_directory):
             for file in files:
                 # Match videos with 4+ digit numbers
                 match = re.findall(pattern, file)
                 if match and (file.endswith('.mp4') or file.endswith('.mov')):
                     # Check for multi-part videos
-                    part_match = re.search(r'(CD\d+|part\d+)', file, re.IGNORECASE)
-                    
+                    part_match = re.search(r'(CD\d+|part\d+)', file,
+                                           re.IGNORECASE)
+
                     file_info = {
                         'id': match[0],
                         'path': os.path.join(root, file)
                     }
-                    
+
                     if part_match:
                         file_info['part'] = part_match.group(0)
-                    
+
                     if match[0] not in history:
                         matching_files.append(file_info)
-        
+
         return matching_files
 
     def get_fantia_post_data(self, post_id, video_path):
@@ -121,14 +127,15 @@ class FantiaCrawler:
         """
         self.driver.implicitly_wait(10)
         self.driver.get(f"https://fantia.jp/posts/{post_id}")
-        
+
         title = self._get_post_title()
-        image = self._get_post_thumbnail(post_id, video_path)  # Pass video_path here
+        image = self._get_post_thumbnail(post_id,
+                                         video_path)  # Pass video_path here
         author = self._get_post_club()
-        content = self._get_post_description()
         post_date = self._get_post_date()
         tags = self._get_post_tags()
-        
+        content = self._get_post_description()
+
         return {
             'id': post_id,
             'title': title,
@@ -142,8 +149,8 @@ class FantiaCrawler:
     def _get_post_title(self):
         """Get the post title"""
         element = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "h1.post-title.mb-10"))
-        )
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "h1.post-title.mb-10")))
         print(element.text)
         return element.text
 
@@ -158,48 +165,49 @@ class FantiaCrawler:
         # Get video directory and base name
         video_dir = os.path.dirname(video_path)
         video_base_name = os.path.splitext(os.path.basename(video_path))[0]
-        
+
         # Prepare save path for thumbnail
         save_path = f"./images/{post_id}.jpg"
         os.makedirs('images', exist_ok=True)
-        
+
         # Check for existing matching image in video directory
         all_files = os.listdir(video_dir)
         matching_image = None
-        
+
         for file_name in all_files:
             file_base, file_ext = os.path.splitext(file_name)
             # Check if filename contains video base name and is an image
-            if (video_base_name in file_base and 
-                file_ext.lower() in ['.jpg', '.jpeg', '.png', '.bmp', '.webp']):
+            if (video_base_name in file_base and file_ext.lower()
+                    in ['.jpg', '.jpeg', '.png', '.bmp', '.webp']):
                 matching_image = os.path.join(video_dir, file_name)
                 break
-        
+
         if matching_image:
             # If matching image found, copy it to the images directory
             print(f"Found matching image: {matching_image}")
             shutil.copy(matching_image, save_path)
             return save_path
-        
+
         # If no matching image, download from Fantia
         img = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "div.post-thumbnail img"))
-        )
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "div.post-thumbnail img")))
         img_url = img.get_attribute("src")
-        
+
         # Use session to maintain cookies
         cookies = self.driver.get_cookies()
         session = requests.Session()
         for cookie in cookies:
             session.cookies.set(cookie['name'], cookie['value'])
-        
+
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
-        
+
         response = session.get(img_url, headers=headers, stream=True)
         response.raise_for_status()
-        
+
         try:
             image = Image.open(BytesIO(response.content))
             if image.format != 'JPEG':
@@ -212,7 +220,7 @@ class FantiaCrawler:
         except Exception as e:
             print(f"Failed to process the image: {e}")
             raise
-        
+
         return save_path
 
     def _get_post_description(self):
@@ -220,47 +228,49 @@ class FantiaCrawler:
         self.driver.implicitly_wait(1)
         try:
             thumbnail_div = WebDriverWait(self.driver, 3).until(
-                EC.presence_of_element_located((By.CLASS_NAME, "post-thumbnail.bg-gray.mt-30.mb-30"))
-            )
-            sibling_div = thumbnail_div.find_element(By.XPATH, "following-sibling::div")
-            
+                EC.presence_of_element_located(
+                    (By.CLASS_NAME, "post-thumbnail.bg-gray.mt-30.mb-30")))
+            sibling_div = thumbnail_div.find_element(By.XPATH,
+                                                     "following-sibling::div")
+
             try:
-                description = sibling_div.find_element(By.CLASS_NAME, "wysiwyg.mb-30")
+                description = sibling_div.find_element(By.CLASS_NAME,
+                                                       "wysiwyg.mb-30")
                 html_content = description.get_attribute("innerHTML")
             except Exception:
-                description = sibling_div.find_element(By.CSS_SELECTOR, "div.ql-container.ql-snow.ql-disabled div.ql-editor")
+                description = sibling_div.find_element(
+                    By.CSS_SELECTOR,
+                    "div.ql-container.ql-snow.ql-disabled div.ql-editor")
                 html_content = description.get_attribute("innerHTML")
-            
+
             # 清理 HTML 并返回结果
             html_content = re.sub(r'(<br\s*/?>\s*){2,}', '<br>', html_content)
             return html_content.replace('<br>', os.linesep)
 
         except Exception as e:
-            print(
-                f"Failed to fetch post description: {e}"
-            )
+            print(f"Failed to fetch post description: {e}")
             return ''
 
     def _get_post_club(self):
         """Get fanclub/author name"""
         h1_anchor = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "h1.fanclub-name a"))
-        )
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "h1.fanclub-name a")))
         return h1_anchor.text.strip()
 
     def _get_post_date(self):
         """Get post publication date"""
         date_element = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "small.post-date.text-muted span"))
-        )
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "small.post-date.text-muted span")))
         date_text = date_element.text.strip()
         return datetime.strptime(date_text, "%Y/%m/%d %H:%M")
 
     def _get_post_tags(self):
         """Get post tags"""
         anchor_elements = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.btn.btn-xs.btn-default.mr-5.mb-5"))
-        )
+            EC.presence_of_all_elements_located(
+                (By.CSS_SELECTOR, "a.btn.btn-xs.btn-default.mr-5.mb-5")))
         tags = []
         for anchor in anchor_elements:
             try:
@@ -307,7 +317,8 @@ class FantiaCrawler:
         studio = ET.SubElement(movie, "studio")
         studio.text = metadata['author']
 
-        return ET.tostring(movie, encoding="utf-8", xml_declaration=True).decode("utf-8")
+        return ET.tostring(movie, encoding="utf-8",
+                           xml_declaration=True).decode("utf-8")
 
     def organize_video(self, video_file, metadata):
         """
@@ -327,15 +338,19 @@ class FantiaCrawler:
 
         # Write NFO file
         nfo_content = self.generate_nfo(metadata)
-        with open(os.path.join(movie_path, f"{file_base}.nfo"), 'w', encoding='utf-8') as f:
+        with open(os.path.join(movie_path, f"{file_base}.nfo"),
+                  'w',
+                  encoding='utf-8') as f:
             f.write(nfo_content)
 
         # Copy thumbnail
-        shutil.copyfile(metadata['image'], os.path.join(movie_path, f"{file_base}.jpg"))
+        shutil.copyfile(metadata['image'],
+                        os.path.join(movie_path, f"{file_base}.jpg"))
 
         # Move video file
         try:
-            os.rename(video_file['path'], os.path.join(movie_path, f"{file_base}.mp4"))
+            os.rename(video_file['path'],
+                      os.path.join(movie_path, f"{file_base}.mp4"))
         except FileExistsError:
             print(f"Skipping file {video_file['path']} as it already exists.")
 
@@ -354,34 +369,35 @@ class FantiaCrawler:
         Main method to process unprocessed videos
         """
         try:
-            # Log in
-            self.login()
             # Get processing history
             history = self.get_history()
             # Find unprocessed videos
             matching_files = self.find_matching_videos(history)
-            # Process each video
-            processed_ids = []
 
-            print(f"Ready to fetch metadata for {len(matching_files)} files ...")
-            for video_file in matching_files:
-                try:
-                    # Get post metadata, passing the video path
-                    metadata = self.get_fantia_post_data(
-                        video_file['id'], 
-                        video_file['path']
-                    )
-                    
-                    # Organize video and associated files
-                    self.organize_video(video_file, metadata)
-                    
-                    # Track processed IDs
-                    processed_ids.append(video_file['id'])
-                except Exception as e:
-                    print(f"Error processing video {video_file['path']}: {e}")
+            if matching_files:
+                print(
+                    f"Ready to fetch metadata for {len(matching_files)} files ...")
+                # Log in
+                self.login()
+                # Process each video
+                processed_ids = []
 
-            # Update history log
-            self.update_history(processed_ids)
+                for video_file in matching_files:
+                    try:
+                        # Get post metadata, passing the video path
+                        metadata = self.get_fantia_post_data(
+                            video_file['id'], video_file['path'])
+
+                        # Organize video and associated files
+                        self.organize_video(video_file, metadata)
+
+                        # Track processed IDs
+                        processed_ids.append(video_file['id'])
+                    except Exception as e:
+                        print(f"Error processing video {video_file['path']}: {e}")
+
+                # Update history log
+                self.update_history(processed_ids)
 
         except Exception as e:
             print(f"An error occurred during video processing: {e}")
@@ -395,8 +411,3 @@ class FantiaCrawler:
         """
         if self.driver:
             self.driver.quit()
-
-# Example usage
-if __name__ == '__main__':
-    crawler = FantiaCrawler('your_email@example.com', 'your_password')
-    crawler.process_videos()
