@@ -21,6 +21,7 @@ class FantiaCrawler:
                  working_directory=None,
                  driver='chrome',
                  prefix='',
+                 replace_space=False
                  ):
         """
         Initialize the Fantia Crawler
@@ -35,6 +36,7 @@ class FantiaCrawler:
         self.history_file = os.path.join(self.working_directory,
                                          'finished.log')
         self.prefix = prefix
+        self.replace_space = replace_space
         # Init web driver
         if driver.lower() == 'edge':
             self.driver = webdriver.Edge()
@@ -339,7 +341,10 @@ class FantiaCrawler:
         # Prepare file names
         file_base = metadata['id']
         if video_file.get('part'):
-            file_base = f"{metadata['id']} {video_file['part']}"
+            if self.replace_space:
+                file_base = f"{metadata['id']}-{video_file['part']}"
+            else:
+                file_base = f"{metadata['id']} {video_file['part']}"
 
         if self.prefix:
             file_base = f"{self.prefix}{file_base}"
