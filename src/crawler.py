@@ -172,8 +172,7 @@ class FantiaCrawler:
         video_base_name = os.path.splitext(os.path.basename(video_path))[0]
 
         # Prepare save path for thumbnail
-        save_path = f"./images/{post_id}.jpg"
-        os.makedirs('images', exist_ok=True)
+        save_path = f"{os.path.join(self.working_directory, 'images')}/{post_id}.jpg"
 
         # Check for existing matching image in video directory
         all_files = os.listdir(video_dir)
