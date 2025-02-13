@@ -1,6 +1,6 @@
 import argparse
 import os
-from .crawler import FantiaCrawler
+from crawler import FantiaCrawler
 
 def main():
     parser = argparse.ArgumentParser(description="Fantia Metadata Crawler")
