@@ -17,15 +17,19 @@ def main():
                         default=os.getcwd(), 
                         help='Directory to process videos (default: current directory)')
     
+    parser.add_argument('-x', '--prefix',
+                        default='',
+                        help='Prefix to add to organized files. e.g., "FANTIA-" result "FANTIA-[ID]" in  (default: empty)')
+
     args = parser.parse_args()
-    
+
     try:
-        crawler = FantiaCrawler(args.email, args.password, working_directory=args.directory, driver=args.browser)
+        crawler = FantiaCrawler(email=args.email, password=args.password, working_directory=args.directory,
+                                driver=args.browser, prefix=args.prefix)
         crawler.process_videos()
     except Exception as e:
         print(f"An error occurred: {e}")
-    finally:
-        crawler.teardown()
+
 
 if __name__ == '__main__':
     main()

@@ -19,7 +19,9 @@ class FantiaCrawler:
                  email,
                  password,
                  working_directory=None,
-                 driver='chrome'):
+                 driver='chrome',
+                 prefix='',
+                 ):
         """
         Initialize the Fantia Crawler
         
@@ -32,6 +34,7 @@ class FantiaCrawler:
         self.working_directory = working_directory or os.getcwd()
         self.history_file = os.path.join(self.working_directory,
                                          'finished.log')
+        self.prefix = prefix
         # Init web driver
         if driver.lower() == 'edge':
             self.driver = webdriver.Edge()
@@ -329,12 +332,17 @@ class FantiaCrawler:
         """
         # Create post-specific directory
         movie_path = os.path.join(self.working_directory, metadata['id'])
+        if self.prefix:
+            movie_path = os.path.join(self.working_directory, str(self.prefix) + str(metadata['id']))
         os.makedirs(movie_path, exist_ok=True)
 
         # Prepare file names
         file_base = metadata['id']
         if video_file.get('part'):
             file_base = f"{metadata['id']} {video_file['part']}"
+
+        if self.prefix:
+            file_base = f"{self.prefix}{file_base}"
 
         # Write NFO file
         nfo_content = self.generate_nfo(metadata)
