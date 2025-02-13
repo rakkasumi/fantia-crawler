@@ -410,6 +410,8 @@ class FantiaCrawler:
 
                 # Update history log
                 self.update_history(processed_ids)
+            else:
+                print(f"No matching videos found. All videos have already been processed?")
 
         except Exception as e:
             print(f"An error occurred during video processing: {e}")
@@ -422,4 +424,5 @@ class FantiaCrawler:
         Close the browser
         """
         if self.driver:
+            print("Closing browser...")
             self.driver.quit()
