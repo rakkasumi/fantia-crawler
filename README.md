@@ -13,6 +13,8 @@ A metadata crawler for organizing Fantia videos for media servers like Jellyfin 
 
 ### Example
 
+> **The following are the default organization behavior, it can be changed with the "--prefix" and "--replace-space" flags**
+
 #### Before Organization
 
 ```ascii
@@ -61,22 +63,22 @@ A metadata crawler for organizing Fantia videos for media servers like Jellyfin 
 ![](https://geelao-oss.oss-cn-hangzhou.aliyuncs.com/db/202411281114234.png?x-oss-process=style/jpeg)
 
 ### Installation
-
-```bash
-pip install fantia-crawler
-```
+1. Download .whl package from Release
+2. `pip install /path/to/whl/file`
 
 ### Usage
 
 ```bash
-fantia-crawler -e your_email@example.com -p your_password -b browser -d /path/to/video/directory
+fantia-crawler [OPTIONS]
 ```
 
-### Arguments
-- `-e, --email`: Your Fantia account email
-- `-p, --password`: Your Fantia account password
+### Options
+- `-e, --email`: Autofill your Fantia account email, if empty you may need to enter it manually
+- `-p, --password`: Autofill your account password, if empty you may need to enter it manually
 - `-b, --browser`: Can be Chrome, Edge, Firefox or Safari
-- `-d, --directory`: Directory to process videos (defaults to current directory)
+- `-d, --directory`: Directory to process videos (defaults to current directory). If you are using Windows, it is recommended to surround the path with double quotes
+- `-x, --prefix`: Prefix to add to organized file name. e.g., set "-x FANTIA-", file and folder's name will become "FANTIA-[ID]" (default: empty)
+- `-r, --replace-space`: Replace spaces between filename parts with hyphens (-) (default: false). If true, "31XXXX part1" will become "31XXXX-part1"
 
 ### Usage Requirements
 - Video filenames must include the Fantia post ID (from URL: https://fantia.jp/posts/xxxxxxx)
@@ -109,22 +111,22 @@ $Env:http_proxy="http://127.0.0.1:yourport";$Env:https_proxy="http://127.0.0.1:y
 ```
 
 ### 安装
-
-```bash
-pip install fantia-crawler
-```
+1. 从Release页面下载.whl文件
+2. `pip install /path/to/whl/file`
 
 ### 使用方法
 
 ```bash
-fantia-crawler -e 账号 -p 密码
+fantia-crawler [可选选项]
 ```
 
-### 参数说明
-- `-e, --email`: Fantia账号邮箱
-- `-p, --password`: Fantia账号密码
+### 选项说明
+- `-e, --email`: 自动填充您的 Fantia 账户邮箱，如果为空，则可能需要手动输入
+- `-p, --password`: 自动填充您的账户密码，如果为空，则可能需要手动输入
 - `-b, --browser`: 可以是Chrome, Edge, Firefox或者Safari
-- `-d, --directory`: 视频处理目录（默认为当前目录）
+- `-d, --directory`: 处理视频的目录（默认为当前目录）。如果您使用的是 Windows 系统，建议用双引号将路径括起来
+- `-x, --prefix`: 为整理后的文件名添加前缀。例如，设置为"-x FANTIA-" 文件和文件夹的名称将变为 "FANTIA-[ID]"（默认值为 空）
+- `-r, --replace-space`: 用连字符 (-) 替换文件名各部分之间的空格（默认为 false）。如果为 true, "31XXXX part1" 将变为 "31XXXX-part1"
 
 ### 使用要求
 - 视频文件名必须包含Fantia帖子ID（来自URL: https://fantia.jp/posts/xxxxxxx）
@@ -132,7 +134,5 @@ fantia-crawler -e 账号 -p 密码
 - 与视频文件同名的图像文件将会被直接使用，跳过爬取图片
 
 ### 登录流程
-
-为避免反爬虫检测，需要手动登录。
-
-在Selenium打开的页面成功登录并返回Fantia主页后，在命令行中按Enter继续
+- 为避免反爬虫检测，需要手动登录。
+- 在Selenium打开的页面成功登录并返回Fantia主页后，在命令行中按Enter继续
