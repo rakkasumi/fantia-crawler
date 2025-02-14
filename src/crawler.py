@@ -21,7 +21,7 @@ class FantiaCrawler:
                  working_directory=None,
                  driver='chrome',
                  prefix='',
-                 replace_space=False
+                 dash='-',
                  ):
         """
         Initialize the Fantia Crawler
@@ -36,7 +36,7 @@ class FantiaCrawler:
         self.history_file = os.path.join(self.working_directory,
                                          'finished.log')
         self.prefix = prefix
-        self.replace_space = replace_space
+        self.dash = dash
         # Init web driver
         if driver.lower() == 'edge':
             self.driver = webdriver.Edge()
@@ -340,13 +340,10 @@ class FantiaCrawler:
         # Prepare file names
         file_base = metadata['id']
         if video_file.get('part'):
-            if self.replace_space:
-                file_base = f"{metadata['id']}-{video_file['part']}"
-            else:
-                file_base = f"{metadata['id']} {video_file['part']}"
+            file_base = f"{metadata['id']}{self.dash}{video_file['part']}"
 
         if self.prefix:
-            file_base = f"{self.prefix}{file_base}"
+            file_base = f"{self.prefix}{self.dash}{file_base}"
 
         # Write NFO file
         nfo_content = self.generate_nfo(metadata)
