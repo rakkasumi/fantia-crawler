@@ -64,7 +64,7 @@ A metadata crawler for organizing Fantia videos for media servers like Jellyfin 
 
 ### Installation
 1. Download .whl package from Release
-2. `pip install /path/to/whl/file`
+2. `pip install /path/to/release/package.whl`
 
 ### Usage
 
@@ -77,8 +77,8 @@ fantia-crawler [OPTIONS]
 - `-p, --password`: Autofill your account password, if empty you may need to enter it manually
 - `-b, --browser`: Can be Chrome, Edge, Firefox or Safari
 - `-d, --directory`: Directory to process videos (defaults to current directory). If you are using Windows, it is recommended to surround the path with double quotes
-- `-x, --prefix`: Prefix to add to organized file name. e.g., set "-x FANTIA-", file and folder's name will become "FANTIA-[ID]" (default: empty)
-- `-r, --replace-space`: Replace spaces between filename parts with hyphens (-) (default: false). If true, "31XXXX part1" will become "31XXXX-part1"
+- `-x, --prefix`: Prefix to add to organized file name. e.g., set "-x FANTIA", file and folder's name will become "FANTIA{dash}[ID]" (default: empty)
+- `-D, --dash`: Define the default hypen between prefix, id and parts, default `-`
 
 ### Usage Requirements
 - Video filenames must include the Fantia post ID (from URL: https://fantia.jp/posts/xxxxxxx)
@@ -125,8 +125,8 @@ fantia-crawler [可选选项]
 - `-p, --password`: 自动填充您的账户密码，如果为空，则可能需要手动输入
 - `-b, --browser`: 可以是Chrome, Edge, Firefox或者Safari
 - `-d, --directory`: 处理视频的目录（默认为当前目录）。如果您使用的是 Windows 系统，建议用双引号将路径括起来
-- `-x, --prefix`: 为整理后的文件名添加前缀。例如，设置为"-x FANTIA-" 文件和文件夹的名称将变为 "FANTIA-[ID]"（默认值为 空）
-- `-r, --replace-space`: 用连字符 (-) 替换文件名各部分之间的空格（默认为 false）。如果为 true, "31XXXX part1" 将变为 "31XXXX-part1"
+- `-x, --prefix`: 为整理后的文件名添加前缀。例如，设置为"-x FANTIA" 文件和文件夹的名称将变为 "FANTIA{dash}[ID]"（默认值为 空）
+- `-D, --dash`: 定义文件各部分（前缀、Fantia Post ID号、分P）之间的连接符号，默认是`-`
 
 ### 使用要求
 - 视频文件名必须包含Fantia帖子ID（来自URL: https://fantia.jp/posts/xxxxxxx）
