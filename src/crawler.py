@@ -334,8 +334,10 @@ class FantiaCrawler:
         # Create post-specific directory
         movie_path = os.path.join(self.working_directory, metadata['id'])
         if self.prefix:
-            movie_path = os.path.join(self.working_directory, str(self.prefix) + str(metadata['id']))
+            movie_path = os.path.join(self.working_directory, str(self.prefix) + str(self.dash) + str(metadata['id']))
         os.makedirs(movie_path, exist_ok=True)
+
+        print(self.dash)
 
         # Prepare file names
         file_base = metadata['id']
