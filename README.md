@@ -13,7 +13,11 @@ A metadata crawler for organizing Fantia videos for media servers like Jellyfin 
 
 ### Example
 
-> **The following are the default organization behavior, it can be changed with the "--prefix" and "--replace-space" flags**
+> **The following are the default organization behavior, it can be changed with the "-x" (--prefix) and "-D" (--dash) flags**
+
+```shell
+fantia-crawler -x FANTIA
+```
 
 #### Before Organization
 
@@ -29,31 +33,31 @@ A metadata crawler for organizing Fantia videos for media servers like Jellyfin 
 #### After Organization
 
 ```ascii
-/path/to/videos/****1
-├── ****1.jpg
-├── ****1.mp4
-└── ****1.nfo
+/path/to/videos/FANTIA-****1
+├──FANTIA-****1.jpg
+├──FANTIA-****1.mp4
+└──FANTIA-****1.nfo
 
 /path/to/videos/****2
-├── ****2 part1.jpg
-├── ****2 part1.mp4
-├── ****2 part1.nfo
-├── ****2 part2.jpg
-├── ****2 part2.mp4
-└── ****2 part2.nfo
+├──FANTIA-****2-part1.jpg
+├──FANTIA-****2-part1.mp4
+├──FANTIA-****2-part1.nfo
+├──FANTIA-****2-part2.jpg
+├──FANTIA-****2-part2.mp4
+└──FANTIA-****2-part2.nfo
 
 /path/to/videos/****3
-├── ****3.jpg
-├── ****3.mov
-└── ****3.nfo
+├──FANTIA-****3.jpg
+├──FANTIA-****3.mov
+└──FANTIA-****3.nfo
 
 /path/to/videos/****4
-├── ****4 CD1.jpg
-├── ****4 CD1.mp4
-├── ****4 CD1.nfo
-├── ****4 CD2.jpg
-├── ****4 CD2.mp4
-└── ****4 CD2.nfo
+├──FANTIA-****4-CD1.jpg
+├──FANTIA-****4-CD1.mp4
+├──FANTIA-****4-CD1.nfo
+├──FANTIA-****4-CD2.jpg
+├──FANTIA-****4-CD2.mp4
+└──FANTIA-****4-CD2.nfo
 ```
 
 #### Media Library in Jellyfin
@@ -110,9 +114,58 @@ export HTTP_PROXY=http://127.0.0.1:yourport
 $Env:http_proxy="http://127.0.0.1:yourport";$Env:https_proxy="http://127.0.0.1:yourport"
 ```
 
+### 示例
+
+> **以下是默认的文件整理行为, 可通过选项 "-x" (--prefix) 和 "-D" (--dash) 更改**
+
+```shell
+fantia-crawler -x FANTIA
+```
+
+#### 整理之前
+
+```ascii
+/path/to/videos/****1.mp4
+/path/to/videos/****2_part1.mp4
+/path/to/videos/****2_part2.mp4
+/path/to/videos/****3-Kita-Ikuyo.mov
+/path/to/videos/Fantia-****4 Yamada Ryo-CD1.mp4
+/path/to/videos/Fantia-****4 Yamada Ryo-CD2.mp4
+```
+
+#### 整理之后
+
+```ascii
+/path/to/videos/FANTIA-****1
+├──FANTIA-****1.jpg
+├──FANTIA-****1.mp4
+└──FANTIA-****1.nfo
+
+/path/to/videos/****2
+├──FANTIA-****2-part1.jpg
+├──FANTIA-****2-part1.mp4
+├──FANTIA-****2-part1.nfo
+├──FANTIA-****2-part2.jpg
+├──FANTIA-****2-part2.mp4
+└──FANTIA-****2-part2.nfo
+
+/path/to/videos/****3
+├──FANTIA-****3.jpg
+├──FANTIA-****3.mov
+└──FANTIA-****3.nfo
+
+/path/to/videos/****4
+├──FANTIA-****4-CD1.jpg
+├──FANTIA-****4-CD1.mp4
+├──FANTIA-****4-CD1.nfo
+├──FANTIA-****4-CD2.jpg
+├──FANTIA-****4-CD2.mp4
+└──FANTIA-****4-CD2.nfo
+```
+
 ### 安装
 1. 从Release页面下载.whl文件
-2. `pip install /path/to/whl/file`
+2. `pip install /path/to/release/package.whl`
 
 ### 使用方法
 
