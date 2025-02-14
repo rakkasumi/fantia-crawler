@@ -19,7 +19,10 @@ class FantiaCrawler:
                  email,
                  password,
                  working_directory=None,
-                 driver='chrome'):
+                 driver='chrome',
+                 prefix='',
+                 dash='-',
+                 ):
         """
         Initialize the Fantia Crawler
         
@@ -32,6 +35,8 @@ class FantiaCrawler:
         self.working_directory = working_directory or os.getcwd()
         self.history_file = os.path.join(self.working_directory,
                                          'finished.log')
+        self.prefix = prefix
+        self.dash = dash
         # Init web driver
         if driver.lower() == 'edge':
             self.driver = webdriver.Edge()
@@ -167,8 +172,7 @@ class FantiaCrawler:
         video_base_name = os.path.splitext(os.path.basename(video_path))[0]
 
         # Prepare save path for thumbnail
-        save_path = f"./images/{post_id}.jpg"
-        os.makedirs('images', exist_ok=True)
+        save_path = f"{os.path.join(self.working_directory, 'images')}/{post_id}.jpg"
 
         # Check for existing matching image in video directory
         all_files = os.listdir(video_dir)
@@ -202,7 +206,7 @@ class FantiaCrawler:
 
         headers = {
             'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
 
         response = session.get(img_url, headers=headers, stream=True)
@@ -329,12 +333,17 @@ class FantiaCrawler:
         """
         # Create post-specific directory
         movie_path = os.path.join(self.working_directory, metadata['id'])
+        if self.prefix:
+            movie_path = os.path.join(self.working_directory, str(self.prefix) + str(metadata['id']))
         os.makedirs(movie_path, exist_ok=True)
 
         # Prepare file names
         file_base = metadata['id']
         if video_file.get('part'):
-            file_base = f"{metadata['id']} {video_file['part']}"
+            file_base = f"{metadata['id']}{self.dash}{video_file['part']}"
+
+        if self.prefix:
+            file_base = f"{self.prefix}{self.dash}{file_base}"
 
         # Write NFO file
         nfo_content = self.generate_nfo(metadata)
@@ -398,6 +407,8 @@ class FantiaCrawler:
 
                 # Update history log
                 self.update_history(processed_ids)
+            else:
+                print(f"No matching videos found. All videos have already been processed?")
 
         except Exception as e:
             print(f"An error occurred during video processing: {e}")
@@ -410,4 +421,5 @@ class FantiaCrawler:
         Close the browser
         """
         if self.driver:
+            print("Closing browser...")
             self.driver.quit()

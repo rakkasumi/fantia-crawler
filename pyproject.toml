@@ -4,12 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fantia-crawler"
-version = "0.6.0"
+version = "0.7.0"
 description = "A metadata crawler for Fantia videos"
 readme = "README.md"
 requires-python = ">=3.7"
 authors = [
-    {name = "ChowDPa02K", email = "chowdpa02k@outlook.com"}
+    {name = "ChowDPa02K", email = "chowdpa02k@outlook.com"},
+    {name = "lostkira", email = "github@lokira.tech"}
 ]
 classifiers = [
     'Programming Language :: Python :: 3',
@@ -23,4 +24,4 @@ dependencies = [
 ]
 
 [project.scripts]
-fantia-crawler = "fantia_crawler.cli:main"
+fantia-crawler = "cli:main"
