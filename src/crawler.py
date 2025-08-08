@@ -285,28 +285,40 @@ class FantiaCrawler:
                 print(f"Error extracting title attribute: {e}")
         return tags
 
-    def generate_nfo(self, metadata):
+    def generate_nfo(self, metadata, image_filename=None):
         """
         Generate NFO file for the video
         
         :param metadata: Dictionary of post metadata
+        :param image_filename: Filename of the image file (optional)
         :return: XML string for NFO file
         """
         movie = ET.Element("movie")
 
-        # Add sub-elements
+        # Add plot
         plot = ET.SubElement(movie, "plot")
         plot.text = metadata['content']
 
+        # Add lockdata and dateadded for Jellyfin compatibility
+        lockdata = ET.SubElement(movie, "lockdata")
+        lockdata.text = "false"
+        
+        dateadded = ET.SubElement(movie, "dateadded")
+        dateadded.text = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Add title with ID prefix
         title_element = ET.SubElement(movie, "title")
         title_element.text = f"{metadata['id']} {metadata['title']}"
 
+        # Add original title
         originaltitle = ET.SubElement(movie, "originaltitle")
         originaltitle.text = metadata['title']
 
+        # Add year
         year = ET.SubElement(movie, "year")
         year.text = metadata['post_date'].strftime("%Y")
 
+        # Add premiered and releasedate
         premiered = ET.SubElement(movie, "premiered")
         premiered.text = metadata['post_date'].strftime("%Y-%m-%d")
 
@@ -318,11 +330,36 @@ class FantiaCrawler:
             genre = ET.SubElement(movie, "genre")
             genre.text = tag
 
+        # Add studio
         studio = ET.SubElement(movie, "studio")
         studio.text = metadata['author']
 
-        return ET.tostring(movie, encoding="utf-8",
-                           xml_declaration=True).decode("utf-8")
+        # Add art section for poster and fanart
+        art = ET.SubElement(movie, "art")
+        
+        # Get the poster path relative to the movie directory
+        if image_filename:
+            poster_filename = image_filename
+        else:
+            poster_filename = f"{metadata['id']}.jpg"
+            if self.prefix:
+                poster_filename = f"{self.prefix}{self.dash}{metadata['id']}.jpg"
+        poster = ET.SubElement(art, "poster")
+        poster.text = poster_filename
+        
+        # Add fanart (same as poster for now)
+        fanart = ET.SubElement(art, "fanart")
+        fanart.text = poster_filename
+
+        # Create XML string with proper formatting
+        xml_string = ET.tostring(movie, encoding="utf-8", xml_declaration=True).decode("utf-8")
+        
+        # Format the XML with proper indentation
+        import xml.dom.minidom
+        dom = xml.dom.minidom.parseString(xml_string)
+        formatted_xml = dom.toprettyxml(indent="  ", encoding="utf-8").decode("utf-8")
+        
+        return formatted_xml
 
     def organize_video(self, video_file, metadata):
         """
@@ -347,11 +384,18 @@ class FantiaCrawler:
         if self.prefix:
             file_base = f"{self.prefix}{self.dash}{file_base}"
 
-        # Write NFO file
-        nfo_content = self.generate_nfo(metadata)
-        with open(os.path.join(movie_path, f"{file_base}.nfo"),
-                  'w',
-                  encoding='utf-8') as f:
+        # Copy thumbnail with correct extension
+        image_ext = os.path.splitext(metadata['image'])[1]
+        if not image_ext:
+            image_ext = '.jpg'
+        image_filename = f"{file_base}{image_ext}"
+        shutil.copyfile(metadata['image'],
+                        os.path.join(str(movie_path), str(image_filename)))
+        
+        # Write NFO file with correct image filename
+        nfo_content = self.generate_nfo(metadata, image_filename)
+        nfo_path = os.path.join(str(movie_path), f"{file_base}.nfo")
+        with open(nfo_path, 'w', encoding='utf-8') as f:
             f.write(nfo_content)
 
         # Copy thumbnail
@@ -361,7 +405,7 @@ class FantiaCrawler:
         # Move video file
         try:
             os.rename(video_file['path'],
-                      os.path.join(movie_path, f"{file_base}.mp4"))
+                      os.path.join(str(movie_path), f"{file_base}.mp4"))
         except FileExistsError:
             print(f"Skipping file {video_file['path']} as it already exists.")
 
