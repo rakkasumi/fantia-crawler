@@ -1,9 +1,23 @@
 import argparse
 import os
+try:
+    from importlib.metadata import version
+except ImportError:
+    # Python < 3.8
+    from importlib_metadata import version
 from crawler import FantiaCrawler
+
+def get_version():
+    """Get version using importlib.metadata"""
+    try:
+        return version('fantia-crawler')
+    except Exception:
+        return 'unknown'
 
 def main():
     parser = argparse.ArgumentParser(description="Fantia Metadata Crawler")
+    parser.add_argument('-v', '--version', action='version', 
+                        version=f"Fantia Crawler {get_version()}")
     parser.add_argument('-e', '--email',
                         default='',
                         help='Autofill Fantia account email, if empty you may need to enter it manually')

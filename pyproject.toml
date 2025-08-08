@@ -20,7 +20,8 @@ classifiers = [
 dependencies = [
     'selenium',
     'requests',
-    'pillow'
+    'pillow',
+    'importlib-metadata; python_version<"3.8"'
 ]
 
 [project.scripts]
