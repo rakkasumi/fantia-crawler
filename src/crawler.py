@@ -22,6 +22,7 @@ class FantiaCrawler:
                  driver='chrome',
                  prefix='',
                  dash='-',
+                 emby_jellyfin_support=False,
                  ):
         """
         Initialize the Fantia Crawler
@@ -30,6 +31,7 @@ class FantiaCrawler:
         :param password: Fantia account password
         :param working_directory: Directory to process videos (defaults to current directory)
         """
+        self.emby_jellyfin_support = emby_jellyfin_support
         self.email = email
         self.password = password
         self.working_directory = working_directory or os.getcwd()
@@ -392,15 +394,27 @@ class FantiaCrawler:
         shutil.copyfile(metadata['image'],
                         os.path.join(str(movie_path), str(image_filename)))
         
+        # Copy images for Jellyfin or Emby folder, backdrop and landscape if enabled
+        if self.emby_jellyfin_support:
+            backdrop_path = os.path.join(str(movie_path), "backdrop.jpg")
+            landscape_path = os.path.join(str(movie_path), "landscape.jpg")
+            folder_path = os.path.join(str(movie_path), "folder.jpg")
+            shutil.copyfile(metadata['image'], str(backdrop_path))
+            shutil.copyfile(metadata['image'], str(landscape_path))
+            shutil.copyfile(metadata['image'], str(folder_path))
+
         # Write NFO file with correct image filename
         nfo_content = self.generate_nfo(metadata, image_filename)
         nfo_path = os.path.join(str(movie_path), f"{file_base}.nfo")
         with open(nfo_path, 'w', encoding='utf-8') as f:
             f.write(nfo_content)
 
-        # Copy thumbnail
-        shutil.copyfile(metadata['image'],
-                        os.path.join(movie_path, f"{file_base}.jpg"))
+        # Create movie.nfo for Jellyfin or Emby compatibility if enabled
+        if self.emby_jellyfin_support:
+            # Only create movie.nfo if it doesn't exist yet (for multipart videos)
+            movie_nfo_path = os.path.join(str(movie_path), "movie.nfo")
+            if not os.path.exists(movie_nfo_path):
+                shutil.copy2(nfo_path, str(movie_nfo_path))
 
         # Move video file
         try:

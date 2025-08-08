@@ -36,12 +36,17 @@ def main():
     parser.add_argument('-D', '--dash',
                         default='-', dest='dash',
                         help='Define the default hypen between prefix, id and parts, default `-`')
+    parser.add_argument('--emby-jellyfin-support', 
+                        action='store_true',
+                        default=False,
+                        help='Enable Emby/Jellyfin support (creating backdrop.jpg, landscape.jpg, folder.jpg, movie.nfo)')
 
     args = parser.parse_args()
 
     try:
         crawler = FantiaCrawler(email=args.email, password=args.password, working_directory=args.directory,
-                                driver=args.browser, prefix=args.prefix, dash=args.dash)
+                                driver=args.browser, prefix=args.prefix, dash=args.dash,
+                                emby_jellyfin_support=args.emby_jellyfin_support)
         crawler.process_videos()
     except Exception as e:
         print(f"An error occurred: {e}")
