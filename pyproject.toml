@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.7"
 authors = [
     {name = "ChowDPa02K", email = "chowdpa02k@outlook.com"},
-    {name = "lostkira", email = "github@lokira.tech"}
+    {name = "rakkasumi", email = "github@rakkasu.me"}
 ]
 classifiers = [
     'Programming Language :: Python :: 3',
