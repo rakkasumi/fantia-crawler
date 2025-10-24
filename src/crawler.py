@@ -310,7 +310,7 @@ class FantiaCrawler:
 
         # Add title with ID prefix
         title_element = ET.SubElement(movie, "title")
-        title_element.text = f"{metadata['id']} {metadata['title']}"
+        title_element.text = f"FANTIA {metadata['id']} {metadata['title']}"
 
         # Add original title
         originaltitle = ET.SubElement(movie, "originaltitle")
